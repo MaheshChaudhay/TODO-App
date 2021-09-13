@@ -1,0 +1,29 @@
+* {
+  margin: 0;
+}
+.todo {
+  margin-bottom: 10px;
+  border-radius: 20px;
+  width: 70%;
+}
+
+.todo li {
+  border-radius: 10px;
+  list-style: none;
+}
+
+li .todo-item {
+  padding: 12px 15px;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.hashtag {
+  display: inline-block;
+  color: lightgray;
+  cursor: pointer;
+  padding: 10px 15px;
+  font-size: 20px;
+  width: 90%;
+}

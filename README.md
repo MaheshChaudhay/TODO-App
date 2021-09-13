@@ -1,3 +1,12 @@
+#TODO APP IN REACT Js
+This is a simple To Do Application in react. This is a fun project to do for beginners who are trying to learn and get their hands dirty on React. In this application, I've used React components, React forms, event handlers etc. 
+
+#Features
+1) You can add tasks to the list.
+2) You can filter the tasks via the #hashtags.
+3) You can delete all the tasks and make the list clear.
+4) You can mark the completed tasks and see which one are remaining to do.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
