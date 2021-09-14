@@ -63,6 +63,8 @@ class App extends Component {
       completedTodos: [],
       hashTagFilters: [],
     });
+    localStorage.removeItem("todos");
+    localStorage.removeItem("completedTodos");
   };
 
   getDisplayTodos = () => {
