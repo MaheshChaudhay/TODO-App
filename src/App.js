@@ -4,6 +4,7 @@ import { FormControl, InputLabel, Input, Button } from "@material-ui/core";
 import Todo from "./Todo";
 import FinishedTodo from "./FinishedTodo";
 import ClearAllIcon from "@material-ui/icons/ClearAll";
+import Chip from "@material-ui/core/Chip";
 
 const todos = localStorage.getItem("todos")
   ? JSON.parse(localStorage.getItem("todos"))
@@ -19,8 +20,6 @@ class App extends Component {
     input: "",
     completedTodos: completedTodos,
     hashTagFilters: [],
-    filteredTodos: [],
-    filteredCompletedTodos: [],
   };
 
   addTodoHandler = (e) => {
@@ -63,63 +62,80 @@ class App extends Component {
       input: "",
       completedTodos: [],
       hashTagFilters: [],
-      filteredTodos: [],
-      filteredCompletedTodos: [],
     });
   };
 
   getDisplayTodos = () => {
-    if (this.state.filteredTodos.length === 0) {
+    console.log("get displayed todos");
+    if (this.state.hashTagFilters.length === 0) {
       return this.state.todos;
     } else {
-      return this.state.filteredTodos;
+      const newFilteredTodos = [];
+      for (let i = 0; i < this.state.todos.length; i++) {
+        let todo = this.state.todos[i];
+        let flag = true;
+        for (let j = 0; j < this.state.hashTagFilters.length; j++) {
+          if (todo.hashTags.indexOf(this.state.hashTagFilters[j]) === -1) {
+            flag = false;
+          }
+        }
+        if (flag === true) {
+          const requiredTodo = { ...todo };
+          newFilteredTodos.push(requiredTodo);
+        }
+      }
+      console.log("new filtered todos>>>>>", newFilteredTodos);
+      return newFilteredTodos;
     }
   };
 
   getDisplayCompletedTodos = () => {
-    if (this.state.filteredCompletedTodos.length === 0) {
+    if (this.state.hashTagFilters.length === 0) {
       return this.state.completedTodos;
     } else {
-      return this.state.filteredCompletedTodos;
+      const newFilteredTodos = [];
+      for (let i = 0; i < this.state.completedTodos.length; i++) {
+        let todo = this.state.completedTodos[i];
+        let flag = true;
+        for (let j = 0; j < this.state.hashTagFilters.length; j++) {
+          if (todo.hashTags.indexOf(this.state.hashTagFilters[j]) === -1) {
+            flag = false;
+          }
+        }
+        if (flag === true) {
+          const requiredTodo = { ...todo };
+          newFilteredTodos.push(requiredTodo);
+        }
+      }
+      console.log("new filtered todos>>>>>", newFilteredTodos);
+
+      return newFilteredTodos;
     }
   };
 
   removeFilterHandler = () => {
     this.setState({
       hashTagFilters: [],
-      filteredTodos: [],
-      filteredCompletedTodos: [],
     });
   };
 
   hashTagFilterHandler = (value) => {
-    let newFilteredTodos = [];
-    let newFilteredCompletedTodos = [];
-    if (this.state.filteredTodos.length === 0) {
-      newFilteredTodos = this.state.todos.filter((todo) => {
-        return todo.hashTags.indexOf(value) !== -1;
+    if (this.state.hashTagFilters.indexOf(value) === -1) {
+      this.setState({
+        hashTagFilters: [value, ...this.state.hashTagFilters],
       });
-      newFilteredCompletedTodos = this.state.completedTodos.filter((todo) => {
-        return todo.hashTags.indexOf(value) !== -1;
-      });
-    } else {
-      newFilteredTodos = this.state.filteredTodos.filter((todo) => {
-        return todo.hashTags.indexOf(value) !== -1;
-      });
-      newFilteredCompletedTodos = this.state.filteredCompletedTodos.filter(
-        (todo) => {
-          return todo.hashTags.indexOf(value) !== -1;
-        }
-      );
     }
-    this.setState({
-      ...this.state,
-      hashTagFilters: [value, ...this.state.hashTagFilters],
-      filteredTodos: newFilteredTodos,
-      filteredCompletedTodos: newFilteredCompletedTodos,
-    });
+  };
 
-    console.log("clicked hashtag>>>>>>>", this.state.hashTagFilters);
+  handleDeleteFilter = (value) => {
+    console.log(value);
+    const updatedHashTagFilters = this.state.hashTagFilters.filter(
+      (hashtag) => hashtag !== value
+    );
+    this.setState({
+      hashTagFilters: updatedHashTagFilters,
+    });
+    console.log(updatedHashTagFilters);
   };
 
   render() {
@@ -160,7 +176,7 @@ class App extends Component {
         >
           <Button
             color="secondary"
-            disabled={this.state.filteredTodos.length === 0}
+            disabled={this.state.hashTagFilters.length === 0}
             onClick={this.removeFilterHandler}
           >
             Remove Filters
@@ -193,6 +209,22 @@ class App extends Component {
             ADD TODO
           </Button>
         </form>
+
+        {this.state.hashTagFilters.length === 0 ? (
+          ""
+        ) : (
+          <div className="applied-filters">
+            {this.state.hashTagFilters.map((hashtag) => (
+              <Chip
+                data={hashtag}
+                className="chip"
+                label={hashtag}
+                color="primary"
+                onDelete={() => this.handleDeleteFilter(hashtag)}
+              />
+            ))}
+          </div>
+        )}
         <ul className="todo-list">
           {displayTodos.map((todo) => (
             <Todo
@@ -203,7 +235,10 @@ class App extends Component {
             />
           ))}
           {displayCompletedTodos.map((todo) => (
-            <FinishedTodo todo={todo} />
+            <FinishedTodo
+              todo={todo}
+              onHashTagFilter={this.hashTagFilterHandler}
+            />
           ))}
         </ul>
       </div>
